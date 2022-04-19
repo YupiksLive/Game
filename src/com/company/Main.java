@@ -1,73 +1,99 @@
 package com.company;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class Main {
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) {
         StringBuilder stringBuilder = new StringBuilder();
-        File games = new File("Games");
+        File games = new File("D://Проекты//JavaFiz//Game", "Games");
+        createDirectory(games, stringBuilder);
         File src = new File("D://Проекты//JavaFiz//Game//Games", "src");
+        createDirectory(src, stringBuilder);
         File res = new File("D://Проекты//JavaFiz//Game//Games", "res");
+        createDirectory(res, stringBuilder);
         File savegames = new File("D://Проекты//JavaFiz//Game//Games", "savegames");
+        createDirectory(savegames, stringBuilder);
         File temp = new File("D://Проекты//JavaFiz//Game//Games", "temp");
-        File tempTxt = new File(temp,"temp.txt");
-        File main = new File(src,"main");
-        File test = new File(src,"test");
-        File mainJava = new File(main,"Main.java");
-        File utilsJava = new File(main,"Utils.java");
-        File drawables = new File(res,"drawables");
-        File vectors = new File(res,"vectors");
-        File icons = new File(res,"icons");
-        if (src.mkdir()){
-            stringBuilder.append("Каталог "+ src.getName() +" создан\n");
-        }
-        if (res.mkdir()){
-            stringBuilder.append("Каталог "+ res.getName() +" создан\n");
-        }
-        if (savegames.mkdir()){
-            stringBuilder.append("Каталог "+ savegames.getName() +" создан\n");
-        }
-        if (temp.mkdir()){
-            stringBuilder.append("Каталог "+ temp.getName() +" создан\n");
-        }
-        if (main.mkdir()){
-            stringBuilder.append("Каталог "+ main.getName() +" создан\n");
-        }
-        if (test.mkdir()){
-            stringBuilder.append("Каталог "+ test.getName() +" создан\n");
-        }
-        if (drawables.mkdir()){
-            stringBuilder.append("Каталог "+ drawables.getName() +" создан\n");
-        }
-        if (vectors.mkdir()){
-            stringBuilder.append("Каталог "+ vectors.getName() +" создан\n");
-        }
-        if (icons.mkdir()){
-            stringBuilder.append("Каталог "+ icons.getName() +" создан\n");
-        }
-        try {
-            if (mainJava.createNewFile()){
-                stringBuilder.append("Файл "+ mainJava.getName() +" создан\n");
-            }
-            if (utilsJava.createNewFile()){
-                stringBuilder.append("Файл "+utilsJava.getName() +" создан\n");
-            }
-            if (tempTxt.createNewFile()){
-                stringBuilder.append("Файл "+ tempTxt.getName() +" создан\n");
-            }
-		} catch (IOException ex){
-			System.out.println(ex.getMessage());
-		}
-        String sb = stringBuilder.toString();
-        try (FileOutputStream tempTxtWriter = new FileOutputStream(tempTxt)){
-            byte[] bytes = sb.getBytes();
-                tempTxtWriter.write(bytes,0, bytes.length);
+        createDirectory(temp, stringBuilder);
+        File tempTxt = new File(temp, "temp.txt");
+        createFile(tempTxt, stringBuilder);
+        File main = new File(src, "main");
+        createDirectory(main, stringBuilder);
+        File test = new File(src, "test");
+        createDirectory(test, stringBuilder);
+        File mainJava = new File(main, "Main.java");
+        createFile(mainJava, stringBuilder);
+        File utilsJava = new File(main, "Utils.java");
+        createFile(utilsJava, stringBuilder);
+        File drawables = new File(res, "drawables");
+        createDirectory(drawables, stringBuilder);
+        File vectors = new File(res, "vectors");
+        createDirectory(vectors, stringBuilder);
+        File icons = new File(res, "icons");
+        createDirectory(icons, stringBuilder);
+        File player1 = new File(savegames, "savePlayer1.txt");
+        createFile(player1, stringBuilder);
+        File player2 = new File(savegames, "savePlayer2.txt");
+        createFile(player2, stringBuilder);
+        File player3 = new File(savegames, "savePlayer3.txt");
+        createFile(player3, stringBuilder);
+        try (FileWriter tempTxtWriter = new FileWriter(tempTxt)) {
+            tempTxtWriter.write(stringBuilder.toString());
         } catch (IOException exception) {
             exception.printStackTrace();
         }
+        GameProgress gameProgressPlayer1 = new GameProgress(24, 2, 7, 2.35);
+        GameProgress gameProgressPlayer2 = new GameProgress(72, 1, 5, 3.5);
+        GameProgress gameProgressPlayer3 = new GameProgress(1, 1, 89, 7.4);
+        gameProgressPlayer1.saveGame(player1, gameProgressPlayer1);
+        gameProgressPlayer2.saveGame(player2, gameProgressPlayer2);
+        gameProgressPlayer3.saveGame(player3, gameProgressPlayer3);
+        try (ZipOutputStream zSave = new ZipOutputStream(new FileOutputStream("D://Проекты//JavaFiz//Game//Games//savegames//zip_save.zip"));
+             FileInputStream savePlayerRead = new FileInputStream(player1); FileInputStream savePlayerRead2 = new FileInputStream(player2); FileInputStream savePlayerRead3 = new FileInputStream(player3)) {
+            ZipEntry entry = new ZipEntry(player1.getName());
+            zSave.putNextEntry(entry);
+            byte[] buffer = new byte[savePlayerRead.available()];
+            savePlayerRead.read(buffer);
+            zSave.write(buffer);
+            zSave.closeEntry();
+
+            zSave.putNextEntry(new ZipEntry(player2.getName()));
+            byte[] buffer2 = new byte[savePlayerRead2.available()];
+            savePlayerRead2.read(buffer2);
+            zSave.write(buffer2);
+            zSave.closeEntry();
+
+            zSave.putNextEntry(new ZipEntry(player3.getName()));
+            byte[] buffer3 = new byte[savePlayerRead3.available()];
+            savePlayerRead3.read(buffer3);
+            zSave.write(buffer3);
+            zSave.closeEntry();
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
+        for (File item : savegames.listFiles()) {
+            if (item.getName().indexOf(".txt") != -1) {
+                item.delete();
+            }
+        }
     }
+
+    public static void createDirectory(File need, StringBuilder stringBuilder) {
+        if (need.mkdir()) {
+            stringBuilder.append("Каталог " + need.getName() + " создан\n");
+        }
     }
+
+    public static void createFile(File need, StringBuilder stringBuilder) {
+        try {
+            if (need.createNewFile()) {
+                stringBuilder.append("Файл " + need.getName() + " создан\n");
+            }
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+}
