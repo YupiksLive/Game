@@ -37,12 +37,4 @@ public class GameProgress implements Serializable {
             exception.printStackTrace();
         }
     }
-    public void zip (ZipOutputStream zSave,FileInputStream savePlayerRead,File player) throws IOException {
-        ZipEntry entry = new ZipEntry(player.getName());
-        zSave.putNextEntry(entry);
-        byte[] buffer = new byte[savePlayerRead.available()];
-        savePlayerRead.read(buffer);
-        zSave.write(buffer);
-        zSave.closeEntry();
-    }
 }
