@@ -51,31 +51,24 @@ public class Main {
         gameProgressPlayer1.saveGame(player1, gameProgressPlayer1);
         gameProgressPlayer2.saveGame(player2, gameProgressPlayer2);
         gameProgressPlayer3.saveGame(player3, gameProgressPlayer3);
-        try (ZipOutputStream zSave = new ZipOutputStream(new FileOutputStream("D://Проекты//JavaFiz//Game//Games//savegames//zip_save.zip"));
-             FileInputStream savePlayerRead = new FileInputStream(player1); FileInputStream savePlayerRead2 = new FileInputStream(player2); FileInputStream savePlayerRead3 = new FileInputStream(player3)) {
-            ZipEntry entry = new ZipEntry(player1.getName());
-            zSave.putNextEntry(entry);
-            byte[] buffer = new byte[savePlayerRead.available()];
-            savePlayerRead.read(buffer);
-            zSave.write(buffer);
-            zSave.closeEntry();
-
-            zSave.putNextEntry(new ZipEntry(player2.getName()));
-            byte[] buffer2 = new byte[savePlayerRead2.available()];
-            savePlayerRead2.read(buffer2);
-            zSave.write(buffer2);
-            zSave.closeEntry();
-
-            zSave.putNextEntry(new ZipEntry(player3.getName()));
-            byte[] buffer3 = new byte[savePlayerRead3.available()];
-            savePlayerRead3.read(buffer3);
-            zSave.write(buffer3);
-            zSave.closeEntry();
+        File zipSave = new File(savegames,"zip_save.zip");
+        try (ZipOutputStream zSave = new ZipOutputStream(new FileOutputStream(zipSave))){
+            for (File saves : savegames.listFiles()) {
+                if (saves.getName().contains(".txt")) {
+                    FileInputStream savePlayerRead = new FileInputStream(saves);
+                    zSave.putNextEntry(new ZipEntry(saves.getName()));
+                    byte[] buffer = new byte[savePlayerRead.available()];
+                    savePlayerRead.read(buffer);
+                    zSave.write(buffer);
+                    zSave.closeEntry();
+                }
+            }
         } catch (IOException exception) {
             exception.printStackTrace();
         }
+
         for (File item : savegames.listFiles()) {
-            if (item.getName().indexOf(".txt") != -1) {
+            if (item.getName().contains(".txt")) {
                 item.delete();
             }
         }
