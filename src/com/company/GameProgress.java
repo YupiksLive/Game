@@ -1,8 +1,6 @@
 package com.company;
 
 import java.io.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 public class GameProgress implements Serializable {
     private static final long serialVersionUID = 1L;
