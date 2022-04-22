@@ -60,6 +60,7 @@ public class Main {
                     byte[] buffer = new byte[savePlayerRead.available()];
                     savePlayerRead.read(buffer);
                     zSave.write(buffer);
+                    savePlayerRead.close();
                     zSave.closeEntry();
                 }
             }
