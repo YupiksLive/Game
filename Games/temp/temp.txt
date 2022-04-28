@@ -1,0 +1,16 @@
+Каталог Games создан
+Каталог src создан
+Каталог res создан
+Каталог savegames создан
+Каталог temp создан
+Каталог main создан
+Каталог test создан
+Каталог drawables создан
+Каталог vectors создан
+Каталог icons создан
+Файл temp.txt создан
+Файл Main.java создан
+Файл Utils.java создан
+Файл savePlayer1.txt создан
+Файл savePlayer2.txt создан
+Файл savePlayer3.txt создан
